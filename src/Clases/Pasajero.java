@@ -64,4 +64,12 @@ public class Pasajero {
                 '}';
     }
 
+    public String generarInforme() {
+        return "===== INFORME DE PASAJERO =====\n"
+                + "Nombre: " + nombre + "\n"
+                + "DNI: " + dni + "\n"
+                + "Origen: " + origen + "\n"
+                + "Domicilio de origen: " + domicilio;
+    }
+
 }
