@@ -1,4 +1,4 @@
-package Enums;
+package Enumeradores;
 
 public enum EPermiso {
     CREAR_USUARIO,

@@ -1,9 +1,10 @@
 package Clases;
 
-import Enums.EPermiso;
+import Enumeradores.EPermiso;
 import Exceptions.DatosInvalidosException;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class Usuario {
@@ -24,9 +25,6 @@ public abstract class Usuario {
         this.permisos = new HashSet<>();
     }
 
-    protected Usuario() {
-    }
-
     public String getUser() {
         return user;
     }
@@ -43,6 +41,16 @@ public abstract class Usuario {
         permisos.add(p);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Usuario usuario)) return false;
+        return Objects.equals(user, usuario.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(user);
+    }
 
     @Override
     public String toString() {
@@ -52,6 +60,7 @@ public abstract class Usuario {
                 '}';
     }
 
+    /// metodo para ver que permisos tiene el usuario
     public String listarPermisos(){
         StringBuilder sb = new StringBuilder();
         for (EPermiso p : permisos){
@@ -60,6 +69,17 @@ public abstract class Usuario {
         }
 
         return sb.toString();
+    }
+
+    /// metodo para corroborar un permiso especifico
+    public boolean tienePermiso(EPermiso p) {
+        return permisos.contains(p);
+    }
+
+
+    /// metodo para que al iniciar sesion con el usuario entre con la contraseña correcta
+    public boolean validarPassword(String intento) {
+        return password.equals(intento);
     }
 
 }
