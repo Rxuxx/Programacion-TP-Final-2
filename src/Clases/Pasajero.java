@@ -1,19 +1,36 @@
 package Clases;
 
+import Exceptions.DatosInvalidosException;
+
 import java.util.Objects;
 
 public class Pasajero {
+    /// atributos
+
     private String nombre;
     private String dni;
     private String origen;
     private String domicilio;
 
-    public Pasajero(String nombre, String dni, String origen, String domicilio) {
+    /// constructor
+    public Pasajero(String nombre, String dni, String origen, String domicilio) throws DatosInvalidosException {
+        if (nombre == null || nombre.isBlank()){
+            throw new DatosInvalidosException("Error, ingrese el nombre correctamente");
+        }
+
+        if (dni == null || dni.isBlank()){
+            throw new DatosInvalidosException("Error, ingrese el DNI correctamente");
+        }
+
+        /// isBlank() se utiliza para que se ingresen caraceter obligatoriamene y no dejar solo espacios en blanco
+
         this.nombre = nombre;
         this.dni = dni;
         this.origen = origen;
         this.domicilio = domicilio;
     }
+
+    /// getters y setters
 
     public String getDni() {
         return dni;
@@ -43,6 +60,8 @@ public class Pasajero {
         this.origen = origen;
     }
 
+    /// equals y hashcode de DNI
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Pasajero pasajero)) return false;
@@ -69,7 +88,8 @@ public class Pasajero {
                 + "Nombre: " + nombre + "\n"
                 + "DNI: " + dni + "\n"
                 + "Origen: " + origen + "\n"
-                + "Domicilio de origen: " + domicilio;
+                + "Domicilio de origen: " + domicilio + "\n" +
+                "===============================\n";
     }
 
 }
