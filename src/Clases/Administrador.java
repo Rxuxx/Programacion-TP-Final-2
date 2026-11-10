@@ -1,6 +1,6 @@
 package Clases;
 
-import Enums.EPermiso;
+import  Enumeradores.EPermiso;
 import Exceptions.DatosInvalidosException;
 
 public class Administrador extends Usuario{
@@ -9,14 +9,11 @@ public class Administrador extends Usuario{
         super(user, password);
         obtenerPermiso(EPermiso.HACER_BACKUP);
         obtenerPermiso(EPermiso.CREAR_USUARIO);
-        obtenerPermiso(EPermiso.CARGAR_PASAJEROS);
-        obtenerPermiso(EPermiso.GESTIONAR_RESERVAS);
-        obtenerPermiso(EPermiso.HACER_CHECKIN);
-        obtenerPermiso(EPermiso.HACER_CHECKOUT);
-        obtenerPermiso(EPermiso.VER_ESTADO_HABITACIONES);
     }
 
-    public void asignarPermiso(Usuario u, EPermiso permiso){
+
+    /// metodo para que el administrador le asigne un permiso a cualquier usuario
+    public void asignarPermiso(Usuario u, EPermiso permiso) {
         u.obtenerPermiso(permiso);
     }
 
