@@ -1,0 +1,11 @@
+package Enums;
+
+public enum EPermiso {
+    CREAR_USUARIO,
+    HACER_BACKUP,
+    CARGAR_PASAJEROS,
+    GESTIONAR_RESERVAS,
+    HACER_CHECKIN,
+    HACER_CHECKOUT,
+    VER_ESTADO_HABITACIONES
+}
