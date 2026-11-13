@@ -2,8 +2,11 @@ package Clases;
 
 import Enumeradores.EEstadoHabitacion;
 import Enumeradores.EMotivoNoDisponible;
+import Interfaces.IReservable;
 
-public class Habitacion {
+import java.time.LocalDate;
+
+public abstract class Habitacion implements IReservable {
 
     private int numero;
     private int piso;
@@ -71,4 +74,18 @@ public class Habitacion {
                 ", motivo=" + motivo +
                 '}';
     }
+
+    @Override
+    public boolean estaDisponible(LocalDate desde, LocalDate hasta) {
+        return false;
+    }
+
+    public abstract double calcularPrecioPorNoche();
+
+    public abstract int getCapacidad();
+
+    public abstract String getTipo();
 }
+
+
+

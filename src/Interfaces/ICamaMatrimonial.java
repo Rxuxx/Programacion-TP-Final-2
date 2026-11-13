@@ -1,5 +1,5 @@
 package Interfaces;
 
-public interface ICamaMatrimoneal {
+public interface ICamaMatrimonial {
     boolean camaMatrimonial();
 }

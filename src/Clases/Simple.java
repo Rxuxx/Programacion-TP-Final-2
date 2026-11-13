@@ -6,12 +6,41 @@ import Interfaces.IEscritorio;
 
 public class Simple extends Habitacion implements IEscritorio {
 
-    public Simple(int numero, int piso, double precioBase, EEstadoHabitacion estado, EMotivoNoDisponible motivo) {
+    private boolean tieneEscritorio;
+
+    public Simple(int numero, int piso, double precioBase, EEstadoHabitacion estado, EMotivoNoDisponible motivo, boolean tieneEscritorio) {
         super(numero, piso, precioBase, estado, motivo);
+        this.tieneEscritorio = tieneEscritorio;
+    }
+
+    public void setTieneEscritorio(boolean tieneEscritorio) {
+        this.tieneEscritorio = tieneEscritorio;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "Simple{" +
+                "tieneEscritorio=" + tieneEscritorio +
+                '}';
+    }
+
+    @Override
+    public double calcularPrecioPorNoche() {
+        return this.getPrecioBase();
+    }
+
+    @Override
+    public int getCapacidad() {
+        return 1;
+    }
+
+    @Override
+    public String getTipo() {
+        return "Simple";
     }
 
     @Override
     public boolean tieneEscritorio() {
-        return false;
+        return this.tieneEscritorio;
     }
 }
