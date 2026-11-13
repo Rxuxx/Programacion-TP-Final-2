@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServicioReservas {
-    private List<Reserva> reservas = new ArrayList<>();
+    private ArrayList<Reserva> reservas;
+
+    public ServicioReservas() {
+        this.reservas = new ArrayList<>();
+    }
 
     public boolean estaDisponible(Habitacion habitacion, LocalDate desde, LocalDate hasta) {
 
