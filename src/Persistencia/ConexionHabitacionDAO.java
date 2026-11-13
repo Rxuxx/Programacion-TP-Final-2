@@ -76,4 +76,28 @@ public class ConexionHabitacionDAO {
             throw new FalloConexionException();
         }
     }
+
+    public static void actualizarEstado(Habitacion h) throws FalloConexionException {
+        crearTablaHabitaciones();
+        Connection conn = ConexionBDD.conectar();
+        try {
+            PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE habitacion SET estado = ?, motivo = ? WHERE numero = ?");
+
+            stmt.setString(1, h.getEstado().name());
+            if (h.getMotivo() != null) {
+                stmt.setString(2, h.getMotivo().name());
+            } else {
+                stmt.setNull(2, Types.VARCHAR);
+            }
+            stmt.setInt(3, h.getNumero());
+
+            stmt.execute();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new FalloConexionException();
+        }
+    }
+
 }
