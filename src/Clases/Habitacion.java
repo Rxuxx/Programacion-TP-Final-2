@@ -2,6 +2,7 @@ package Clases;
 
 import Enumeradores.EEstadoHabitacion;
 import Enumeradores.EMotivoNoDisponible;
+import Exceptions.SinMotivoException;
 import Interfaces.IReservable;
 
 import java.time.LocalDate;
@@ -85,6 +86,21 @@ public abstract class Habitacion implements IReservable {
     public abstract int getCapacidad();
 
     public abstract String getTipo();
+
+    public void marcarNoDisponible(EMotivoNoDisponible motivo) throws SinMotivoException {
+        if (motivo == null) {
+            throw new SinMotivoException("Una habitación no disponible necesita un motivo");
+        }
+        this.estado = EEstadoHabitacion.NO_DISPONIBLE;
+        this.motivo = motivo;
+    }
+
+    public void marcarDisponible() {
+        this.estado = EEstadoHabitacion.DISPONIBLE;
+        this.motivo = null;
+    }
+
+
 }
 
 
