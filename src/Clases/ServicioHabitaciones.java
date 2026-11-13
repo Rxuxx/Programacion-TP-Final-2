@@ -49,5 +49,13 @@ public class ServicioHabitaciones {
         return resultadoOcupadas;
     }
 
+    public Habitacion buscarPorNumero(int numero) {
+        for (Habitacion h : habitaciones) {
+            if (h.getNumero() == numero) {
+                return h;
+            }
+        }
+        return null;
+    }
 
 }
