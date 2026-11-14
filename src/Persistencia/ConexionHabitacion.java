@@ -8,7 +8,7 @@ import Exceptions.FalloConexionException;
 
 import java.sql.*;
 
-public class ConexionHabitacionDAO {
+public class ConexionHabitacion {
 
     public static void crearTablaHabitaciones() throws FalloConexionException {
         Connection conn = ConexionBDD.conectar();
