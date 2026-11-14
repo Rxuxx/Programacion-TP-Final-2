@@ -4,9 +4,13 @@ import Clases.Doble;
 import Clases.Habitacion;
 import Clases.Simple;
 import Clases.Suite;
+import Enumeradores.EEstadoHabitacion;
+import Enumeradores.EMotivoNoDisponible;
 import Exceptions.FalloConexionException;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConexionHabitacion {
 
@@ -98,6 +102,49 @@ public class ConexionHabitacion {
         } catch (SQLException e) {
             throw new FalloConexionException();
         }
+    }
+
+    public static List<Habitacion> obtenerHabitaciones() throws FalloConexionException {
+        crearTablaHabitaciones();
+        List<Habitacion> lista = new ArrayList<>();
+        Connection conn = ConexionBDD.conectar();
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM habitacion");
+
+            while (rs.next()) {
+
+                int numero = rs.getInt("numero");
+                int piso = rs.getInt("piso");
+                double precioBase = rs.getDouble("precio_base");
+                EEstadoHabitacion estado = EEstadoHabitacion.valueOf(rs.getString("estado"));
+
+                String motivoTexto = rs.getString("motivo");
+                EMotivoNoDisponible motivo = null;
+                if (motivoTexto != null) {
+                    motivo = EMotivoNoDisponible.valueOf(motivoTexto);
+                }
+
+                String tipo = rs.getString("tipo");
+                if (tipo.equals("Simple")) {
+                    boolean escritorio = rs.getInt("tiene_escritorio") == 1;
+                    lista.add(new Simple(numero, piso, precioBase, estado, motivo, escritorio));
+                } else if (tipo.equals("Doble")) {
+                    boolean cama = rs.getInt("cama_matrimonial") == 1;
+                    lista.add(new Doble(numero, piso, precioBase, estado, motivo, cama));
+                } else if (tipo.equals("Suite")) {
+                    boolean jacuzzi = rs.getInt("tiene_jacuzzi") == 1;
+                    int ambientes = rs.getInt("cantidad_ambientes");
+                    lista.add(new Suite(numero, piso, precioBase, estado, motivo, ambientes, jacuzzi));
+                }
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new FalloConexionException();
+        }
+        return lista;
     }
 
 }
