@@ -1,4 +1,6 @@
 import Clases.*;
+import Exceptions.FalloConexionException;
+import Persistencia.ConexionHabitacion;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -7,9 +9,10 @@ public class Main {
     Repositorio<Pasajero> pasajerosLista = new Repositorio<>();
 
     try{
-        Administrador admin = new Administrador("admin", "1234");
-        usuariosLista.agregar(admin);
-
+        Administrador admin1 = new Administrador("admin", "1234");
+        Recepcionista rec1 = new Recepcionista("nicoRec", "123");
+        usuariosLista.agregar(admin1);
+        usuariosLista.agregar(rec1);
         Pasajero pasajero1 = new Pasajero("Juan", "12345678", "Mar del Plata", "Calle 1");
         Pasajero pasajero2 = new Pasajero("Ana", "87654321", "Balcarce", "Calle 2");
 
@@ -20,8 +23,20 @@ public class Main {
         throw new RuntimeException(e);
     }
 
-    Menu menu = new Menu(usuariosLista, pasajerosLista);
+        ServicioHabitaciones sh = new ServicioHabitaciones();
+        ServicioReservas sr = new ServicioReservas();
+
+        try {
+            for (Habitacion h : ConexionHabitacion.obtenerHabitaciones()) {
+                sh.agregarHabitacion(h);
+            }
+        } catch (FalloConexionException e) {
+            System.out.println("No se pudieron cargar las habitaciones de la base.");
+        }
+    Menu menu = new Menu(usuariosLista, pasajerosLista, sh, sr);
     menu.iniciar();
+
+    /*commint*/
 
     }
 }
