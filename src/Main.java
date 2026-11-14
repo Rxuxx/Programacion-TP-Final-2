@@ -36,5 +36,7 @@ public class Main {
     Menu menu = new Menu(usuariosLista, pasajerosLista, sh, sr);
     menu.iniciar();
 
+    /*commint*/
+
     }
 }
