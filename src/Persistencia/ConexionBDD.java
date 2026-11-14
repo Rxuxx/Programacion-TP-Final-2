@@ -7,9 +7,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConexionBDD {
-    private static final String url = "";
-    private static final String user = "";
-    private static final String password = "";
+    private static final String url = "jdbc:mysql://172.16.1.64:3306/midb";
+    private static final String user = "bdd1";
+    private static final String password = "bdd1";
     public static Connection conn;
 
     public static Connection conectar() throws FalloConexionException {
