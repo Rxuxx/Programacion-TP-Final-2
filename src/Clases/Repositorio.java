@@ -9,6 +9,10 @@ public class Repositorio <T>{
         this.lista = new ArrayList<>();
     }
 
+    public ArrayList<T> getLista() {
+        return lista;
+    }
+
     public void agregar(T elemento) {
         lista.add(elemento);
     }
