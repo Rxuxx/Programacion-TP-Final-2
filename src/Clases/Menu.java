@@ -1,16 +1,22 @@
 package Clases;
 
+import Enumeradores.EPermiso;
+import Exceptions.DatosInvalidosException;
+
 import java.util.Scanner;
 
 public class Menu {
     private Scanner sc = new Scanner(System.in);
     private Repositorio<Usuario> usuarios;
+    private Repositorio<Pasajero> pasajero;
 
-    public Menu(Repositorio<Usuario> usuarios) {
+    public Menu(Repositorio<Usuario> usuarios, Repositorio<Pasajero> pasajero) {
         this.usuarios = usuarios;
+        this.pasajero = pasajero;
     }
 
-    public void iniciar() {
+
+    public void iniciar() throws Exception {
         Usuario usuario = login();
         if (usuario == null) {
             System.out.println("Demasiados intentos fallidos. Programa cerrado.");
@@ -44,7 +50,7 @@ public class Menu {
         return null;
     }
 
-    private void menuAdmin(Administrador admin) {
+    private void menuAdmin(Administrador admin) throws Exception {
         int opcion = -1;
         while (opcion != 0) {
             System.out.println("\n--- MENU ADMINISTRADOR ---");
@@ -57,16 +63,16 @@ public class Menu {
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Backup: en construccion");
+                    admin.hacerBackup(pasajero.getLista(), "backup_pasajeros.txt");
                     break;
                 case 2:
-                    System.out.println("Crear usuario: en construccion");
+                     crearUsuario();
                     break;
                 case 3:
-                    System.out.println("Asignar permisos: en construccion");
+                    asignarPermiso();
                     break;
                 case 0:
-                    System.out.println("Hasta luego");
+                    System.out.println("Saliendo...");
                     break;
                 default:
                     System.out.println("Opcion invalida");
@@ -87,20 +93,69 @@ public class Menu {
 
             switch (opcion) {
                 case 1:
-                    System.out.println("Registrar pasajero: en construccion");
+                    System.out.println("");
                     break;
                 case 2:
-                    System.out.println("Hacer reserva: en construccion");
+                    System.out.println("");
                     break;
                 case 3:
-                    System.out.println("Check-out: en construccion");
+                    System.out.println("");
                     break;
                 case 0:
-                    System.out.println("Hasta luego");
+                    System.out.println("Saliendo...");
                     break;
                 default:
                     System.out.println("Opcion invalida");
             }
         }
+
     }
+
+    private void crearUsuario() {
+        System.out.print("Nombre de usuario: ");
+        String user = sc.nextLine();
+        System.out.print("Contraseña: ");
+        String clave = sc.nextLine();
+
+        try {
+            Recepcionista nuevo = new Recepcionista(user, clave);
+            usuarios.agregar(nuevo);
+            System.out.println("Usuario creado correctamente");
+        } catch (DatosInvalidosException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void asignarPermiso() {
+        System.out.print("Indique a que usuario le va a asignar el permiso: ");
+        String user = sc.nextLine();
+
+        Usuario encontrado = null;
+        for (Usuario u : usuarios.getLista()) {
+            if (u.getUser().equals(user)) {
+                encontrado = u;
+            }
+        }
+
+        if (encontrado == null) {
+            System.out.println("No existe ese usuario");
+            return;
+        }
+
+        System.out.println("Permisos disponibles:");
+        for (EPermiso p : EPermiso.values()) {
+            System.out.println("- " + p);
+        }
+        System.out.print("Permiso: ");
+        String texto = sc.nextLine();
+
+        try {
+            EPermiso permiso = EPermiso.valueOf(texto.toUpperCase());
+            encontrado.obtenerPermiso(permiso);
+            System.out.println("Permiso asignado");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ese permiso no existe");
+        }
+    }
+
 }

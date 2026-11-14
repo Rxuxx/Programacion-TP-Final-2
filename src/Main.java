@@ -1,7 +1,7 @@
 import Clases.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
     Repositorio<Usuario> usuariosLista = new Repositorio<>();
     Repositorio<Pasajero> pasajerosLista = new Repositorio<>();
@@ -16,12 +16,11 @@ public class Main {
         pasajerosLista.agregar(pasajero1);
         pasajerosLista.agregar(pasajero2);
 
-        admin.hacerBackup(pasajerosLista.getLista(), "backup_pasajeros.txt");
     } catch (Exception e) {
         throw new RuntimeException(e);
     }
 
-    Menu menu = new Menu(usuariosLista);
+    Menu menu = new Menu(usuariosLista, pasajerosLista);
     menu.iniciar();
 
     }
