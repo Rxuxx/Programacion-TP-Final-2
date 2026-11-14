@@ -1,12 +1,11 @@
 package Persistencia;
 
 import Clases.Pasajero;
+import Exceptions.DatosInvalidosException;
 import Exceptions.FalloConexionException;
+import Exceptions.PasajeroNoEncontradoException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class ConexionPasajeros {
 
@@ -47,4 +46,30 @@ public class ConexionPasajeros {
         }
     }
 
+    public static Pasajero buscarPorDni(String dni)
+            throws FalloConexionException, PasajeroNoEncontradoException, DatosInvalidosException {
+        crearTablaPasajeros();
+        Connection conn = ConexionBDD.conectar();
+        try {
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM pasajeros WHERE dni = ?");
+            stmt.setString(1, dni);
+            ResultSet rs = stmt.executeQuery();
+
+            Pasajero p = null;
+            if (rs.next()) {
+                p = new Pasajero(rs.getString("nombre"), rs.getString("dni"),
+                        rs.getString("origen"), rs.getString("domicilio"));
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+
+            if (p == null) {
+                throw new PasajeroNoEncontradoException("No existe un pasajero con DNI " + dni);
+            }
+            return p;
+        } catch (SQLException e) {
+            throw new FalloConexionException();
+        }
+    }
 }
