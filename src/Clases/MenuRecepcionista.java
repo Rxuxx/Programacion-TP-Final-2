@@ -1,10 +1,12 @@
 package Clases;
 
 import Enumeradores.EEstadoHabitacion;
+import Exceptions.DatosInvalidosException;
 import Exceptions.FalloConexionException;
 import Exceptions.HabitacionNoDisponibleException;
 import Exceptions.ReservaInvalidaException;
 import Persistencia.ConexionHabitacion;
+import Persistencia.ConexionPasajeros;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -75,11 +77,15 @@ public class MenuRecepcionista {
         System.out.print("Fecha de salida (AAAA-MM-DD): ");
         LocalDate hasta = LocalDate.parse(scanner.nextLine());
 
-        Pasajero pasajero = null;
+        System.out.print("DNI del pasajero: ");
+        String dni = scanner.nextLine();
 
         try {
+            Pasajero pasajero = ConexionPasajeros.buscarPorDni(dni);
             servicioReservas.reservar(hab, pasajero, desde, hasta);
             System.out.println("Reserva realizada.");
+        } catch (PasajeroNoEncontradoException | DatosInvalidosException e) {
+            System.out.println(e.getMessage());
         } catch (ReservaInvalidaException | HabitacionNoDisponibleException e) {
             System.out.println("No se pudo reservar: " + e.getMessage());
         } catch (FalloConexionException e) {
