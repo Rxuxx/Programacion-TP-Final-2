@@ -1,10 +1,7 @@
 package Clases;
 
 import Enumeradores.EEstadoHabitacion;
-import Exceptions.DatosInvalidosException;
-import Exceptions.FalloConexionException;
-import Exceptions.HabitacionNoDisponibleException;
-import Exceptions.ReservaInvalidaException;
+import Exceptions.*;
 import Persistencia.ConexionHabitacion;
 import Persistencia.ConexionPasajeros;
 
