@@ -3,6 +3,12 @@ package Clases;
 import  Enumeradores.EPermiso;
 import Exceptions.DatosInvalidosException;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Administrador extends Usuario{
 
     public Administrador(String user, String password) throws DatosInvalidosException {
@@ -22,6 +28,13 @@ public class Administrador extends Usuario{
             return nuevo;
     }
 
+    public <T> void hacerBackup(List<T> lista, String nombreArchivo) throws Exception{
+        PrintWriter archivo = new PrintWriter(new FileWriter(nombreArchivo));
 
+        for (T elm : lista){
+            archivo.println(elm.toString());
+        }
+
+    }
 
 }
