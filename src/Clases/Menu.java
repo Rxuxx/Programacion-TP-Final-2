@@ -1,6 +1,7 @@
 package Clases;
 
 import Enumeradores.EEstadoHabitacion;
+import Enumeradores.EMotivoNoDisponible;
 import Enumeradores.EPermiso;
 import Exceptions.*;
 import Persistencia.ConexionHabitacion;
@@ -103,6 +104,8 @@ public class Menu {
             System.out.println("6. Listar habitaciones ocupadas");
             System.out.println("7. Listar habitaciones no disponibles");
             System.out.println("8. Agregar habitación");
+            System.out.println("9. Marcar habitación como no disponible");
+            System.out.println("10. Marcar habitación como disponible");
             System.out.println("0. Salir");
             System.out.print("Opcion: ");
             opcion = Integer.parseInt(sc.nextLine());
@@ -123,11 +126,15 @@ public class Menu {
                 case 5:
                     mostrarHabitaciones(servicioHabitaciones.listarDisponibles());
                     break;
-                case 6: mostrarHabitaciones(servicioHabitaciones.listarOcupadas());
+                case 6: mostrarOcupadas();
                     break;
                 case 7: mostrarHabitaciones(servicioHabitaciones.listarNoDisponibles());
                     break;
                 case 8: agregarHabitacion();
+                    break;
+                case 9: marcarNoDisponible();
+                    break;
+                case 10: marcarDisponible();
                     break;
                 case 0:
                     System.out.println("Saliendo...");
@@ -373,5 +380,92 @@ public class Menu {
             System.out.println("No se pudo guardar el check-out en la base.");
         }
     }
+
+    private void mostrarOcupadas() {
+        List<Habitacion> ocupadas = servicioHabitaciones.listarOcupadas();
+        if (ocupadas.isEmpty()) {
+            System.out.println("No hay habitaciones ocupadas.");
+            return;
+        }
+
+        for (Habitacion h : ocupadas) {
+            System.out.println("Habitación " + h.getNumero() + " | " + h.getTipo()
+                    + " | Piso " + h.getPiso());
+            try {
+                Ocupacion o = ConexionOcupacion.buscarHabitacionesDisponibles(h);
+                if (o != null) {
+                    Pasajero p = o.getPasajero();
+                    System.out.println("   Ocupante: " + p.getNombre()
+                            + " | DNI " + p.getDni()
+                            + " | Origen: " + p.getOrigen()
+                            + " | Domicilio: " + p.getDomicilio()
+                            + " | Ingreso: " + o.getFechaIngreso());
+                } else {
+                    System.out.println("   (sin ocupación registrada)");
+                }
+            } catch (FalloConexionException e) {
+                System.out.println("   No se pudo leer el ocupante de la base.");
+            }
+        }
+    }
+
+    private void marcarNoDisponible() {
+        System.out.print("Número de habitación: ");
+        int numero = Integer.parseInt(sc.nextLine());
+
+        Habitacion hab = servicioHabitaciones.buscarPorNumero(numero);
+        if (hab == null) {
+            System.out.println("No existe esa habitación.");
+            return;
+        }
+        if (hab.getEstado() == EEstadoHabitacion.OCUPADA) {
+            System.out.println("La habitación está ocupada: primero hay que hacer el check-out.");
+            return;
+        }
+
+        System.out.println("Motivos disponibles:");
+        for (EMotivoNoDisponible m : EMotivoNoDisponible.values()) {
+            System.out.println("- " + m);
+        }
+        System.out.print("Motivo: ");
+        String texto = sc.nextLine();
+
+        try {
+            EMotivoNoDisponible motivo = EMotivoNoDisponible.valueOf(texto.toUpperCase());
+            hab.marcarNoDisponible(motivo);
+            ConexionHabitacion.actualizarEstado(hab);
+            System.out.println("Habitación marcada como no disponible.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ese motivo no existe.");
+        } catch (SinMotivoException e) {
+            System.out.println(e.getMessage());
+        } catch (FalloConexionException e) {
+            System.out.println("No se pudo guardar el cambio en la base.");
+        }
+    }
+
+    private void marcarDisponible() {
+        System.out.print("Número de habitación: ");
+        int numero = Integer.parseInt(sc.nextLine());
+
+        Habitacion hab = servicioHabitaciones.buscarPorNumero(numero);
+        if (hab == null) {
+            System.out.println("No existe esa habitación.");
+            return;
+        }
+        if (hab.getEstado() != EEstadoHabitacion.NO_DISPONIBLE) {
+            System.out.println("Esa habitación no figura como no disponible.");
+            return;
+        }
+
+        try {
+            hab.marcarDisponible();
+            ConexionHabitacion.actualizarEstado(hab);
+            System.out.println("Habitación disponible nuevamente.");
+        } catch (FalloConexionException e) {
+            System.out.println("No se pudo guardar el cambio en la base.");
+        }
+    }
+
 
 }
