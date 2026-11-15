@@ -78,7 +78,7 @@ public abstract class Habitacion implements IReservable {
 
     @Override
     public boolean estaDisponible(LocalDate desde, LocalDate hasta) {
-        return false;
+        return estado == EEstadoHabitacion.DISPONIBLE;
     }
 
     public abstract double calcularPrecioPorNoche();
