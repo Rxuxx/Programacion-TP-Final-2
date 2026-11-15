@@ -12,7 +12,7 @@ public class ConexionReserva {
         try {
             Statement stmt = conn.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS reserva ("
-                    + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + "id INT PRIMARY KEY AUTO_INCREMENT, "
                     + "numero_habitacion INTEGER NOT NULL, "
                     + "dni_pasajero TEXT NOT NULL, "
                     + "fecha_desde TEXT NOT NULL, "
