@@ -51,5 +51,17 @@ public class ServicioReservas {
         reservas.addAll(cargadas);
     }
 
+    public Reserva buscarReservaDisponible(Habitacion habitacion, Pasajero pasajero, LocalDate fecha) {
+        for (Reserva r : reservas) {
+            boolean mismaHabitacion = r.getHabitacion().getNumero() == habitacion.getNumero();
+            boolean mismoPasajero = r.getPasajero().equals(pasajero);
+            boolean vigente = !fecha.isBefore(r.getFechaDesde()) && fecha.isBefore(r.getFechaHasta());
+
+            if (mismaHabitacion && mismoPasajero && vigente) {
+                return r;
+            }
+        }
+        return null;
+    }
 
 }

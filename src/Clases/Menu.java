@@ -4,6 +4,7 @@ import Enumeradores.EEstadoHabitacion;
 import Enumeradores.EPermiso;
 import Exceptions.*;
 import Persistencia.ConexionHabitacion;
+import Persistencia.ConexionOcupacion;
 import Persistencia.ConexionPasajeros;
 
 import java.time.LocalDate;
@@ -36,7 +37,7 @@ public class Menu {
         if (usuario instanceof Administrador) {
             menuAdmin((Administrador) usuario);
         } else {
-            menuRecepcionista();
+            menuRecepcionista((Recepcionista) usuario);
         }
     }
 
@@ -90,17 +91,18 @@ public class Menu {
         }
     }
 
-    private void menuRecepcionista() {
+    private void menuRecepcionista(Recepcionista rec) {
         int opcion = -1;
         while (opcion != 0) {
             System.out.println("\n--- MENU RECEPCIONISTA ---");
             System.out.println("1. Registrar pasajero");
             System.out.println("2. Hacer reserva");
-            System.out.println("3. Check-out");
-            System.out.println("4. Listar habitaciones disponibles");
-            System.out.println("5. Listar habitaciones ocupadas");
-            System.out.println("6. Listar habitaciones no disponibles");
-            System.out.println("7. Agregar habitación");
+            System.out.println("3. Check-in");
+            System.out.println("4. Check-out");
+            System.out.println("5. Listar habitaciones disponibles");
+            System.out.println("6. Listar habitaciones ocupadas");
+            System.out.println("7. Listar habitaciones no disponibles");
+            System.out.println("8. Agregar habitación");
             System.out.println("0. Salir");
             System.out.print("Opcion: ");
             opcion = Integer.parseInt(sc.nextLine());
@@ -113,16 +115,19 @@ public class Menu {
                     hacerReserva();
                     break;
                 case 3:
-                    System.out.println("");
+                    hacerCheckIn(rec);
                     break;
-                case 4 :
+                case 4:
+                    hacerCheckOut(rec);
+                    break;
+                case 5:
                     mostrarHabitaciones(servicioHabitaciones.listarDisponibles());
                     break;
-                case 5: mostrarHabitaciones(servicioHabitaciones.listarOcupadas());
+                case 6: mostrarHabitaciones(servicioHabitaciones.listarOcupadas());
                     break;
-                case 6: mostrarHabitaciones(servicioHabitaciones.listarNoDisponibles());
+                case 7: mostrarHabitaciones(servicioHabitaciones.listarNoDisponibles());
                     break;
-                case 7: agregarHabitacion();
+                case 8: agregarHabitacion();
                     break;
                 case 0:
                     System.out.println("Saliendo...");
@@ -307,5 +312,66 @@ public class Menu {
         }
     }
 
+    private void hacerCheckIn(Recepcionista rec) {
+        System.out.print("Número de habitación: ");
+        int numero = Integer.parseInt(sc.nextLine());
+
+        Habitacion hab = servicioHabitaciones.buscarPorNumero(numero);
+        if (hab == null) {
+            System.out.println("No existe esa habitación.");
+            return;
+        }
+
+        System.out.print("DNI del pasajero: ");
+        String dni = sc.nextLine();
+
+        try {
+            Pasajero pas = ConexionPasajeros.buscarPorDni(dni);
+            LocalDate hoy = LocalDate.now();
+
+            Reserva reserva = servicioReservas.buscarReservaDisponible(hab, pas, hoy);
+            if (reserva == null && !servicioReservas.estaDisponible(hab, hoy, hoy.plusDays(1))) {
+                System.out.println("La habitación no está disponible hoy y el pasajero no tiene reserva.");
+                return;
+            }
+
+            Ocupacion ocupacion = rec.hacerCheckIn(pas, hab, hoy);
+            ConexionHabitacion.actualizarEstado(hab);
+            ConexionOcupacion.insertarOcupacion(ocupacion);
+            System.out.println("Check-in realizado.");
+        } catch (PasajeroNoEncontradoException | DatosInvalidosException e) {
+            System.out.println(e.getMessage());
+        } catch (FalloConexionException e) {
+        e.printStackTrace();
+        System.out.println("No se pudo guardar el check-in en la base.");
+    }
+    }
+
+    private void hacerCheckOut(Recepcionista rec) {
+        System.out.print("Número de habitación: ");
+        int numero = Integer.parseInt(sc.nextLine());
+
+        Habitacion hab = servicioHabitaciones.buscarPorNumero(numero);
+        if (hab == null) {
+            System.out.println("No existe esa habitación.");
+            return;
+        }
+
+        try {
+            Ocupacion ocupacion = ConexionOcupacion.buscarHabitacionesDisponibles(hab);
+            if (ocupacion == null) {
+                System.out.println("Esa habitación no tiene una ocupación en curso.");
+                return;
+            }
+
+            LocalDate hoy = LocalDate.now();
+            rec.hacerCheckOut(ocupacion, hoy);
+            ConexionHabitacion.actualizarEstado(hab);
+            ConexionOcupacion.registrarSalida(numero, hoy);
+            System.out.println("Check-out realizado. Pasajero: " + ocupacion.getPasajero().getNombre());
+        } catch (FalloConexionException e) {
+            System.out.println("No se pudo guardar el check-out en la base.");
+        }
+    }
 
 }

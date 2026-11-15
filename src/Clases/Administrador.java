@@ -35,6 +35,7 @@ public class Administrador extends Usuario{
             archivo.println(elm.toString());
         }
 
+        archivo.close();
     }
 
 }
