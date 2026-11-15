@@ -35,7 +35,7 @@ public class ConexionOcupacion {
         Connection conn = ConexionBDD.conectar();
         try {
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO ocupacion VALUES (?, ?, ?)");
+                    "INSERT INTO ocupacion VALUES (?, ?, ?, ?, ?)");
             stmt.setInt(1, o.getHabitacion().getNumero());
             stmt.setString(2, o.getPasajero().getDni());
             stmt.setString(3, o.getFechaIngreso().toString());
