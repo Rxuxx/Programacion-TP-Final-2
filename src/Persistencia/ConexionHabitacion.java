@@ -76,7 +76,8 @@ public class ConexionHabitacion {
             stmt.execute();
             stmt.close();
             conn.close();
-        } catch (SQLException e) {
+        }  catch (SQLException e) {
+            System.out.println("ERROR: " + e.getMessage());
             throw new FalloConexionException();
         }
     }

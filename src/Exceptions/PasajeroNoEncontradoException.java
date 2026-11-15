@@ -1,7 +1,7 @@
 package Exceptions;
 
 public class PasajeroNoEncontradoException extends Exception{
-    public PasajeroNoEncontradoException(String s) {
+    public PasajeroNoEncontradoException(String message) {
         super(message);
     }
 }
