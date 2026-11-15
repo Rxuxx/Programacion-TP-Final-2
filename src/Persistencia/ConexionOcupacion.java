@@ -35,7 +35,7 @@ public class ConexionOcupacion {
         Connection conn = ConexionBDD.conectar();
         try {
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO ocupacion VALUES (?, ?, ?, ?, ?)");
+                    "INSERT INTO ocupacion (numero_habitacion, dni_pasajero, fecha_ingreso) VALUES (?, ?, ?)");
             stmt.setInt(1, o.getHabitacion().getNumero());
             stmt.setString(2, o.getPasajero().getDni());
             stmt.setString(3, o.getFechaIngreso().toString());
@@ -43,8 +43,9 @@ public class ConexionOcupacion {
             stmt.close();
             conn.close();
         } catch (SQLException e) {
-            throw new FalloConexionException();
-        }
+        System.out.println("ERROR: " + e.getMessage());
+        throw new FalloConexionException();
+    }
     }
 
     public static void registrarSalida(int numeroHabitacion, LocalDate fecha) throws FalloConexionException {
