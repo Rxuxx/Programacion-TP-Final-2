@@ -100,18 +100,17 @@ public class Menu {
             System.out.println("4. Listar habitaciones disponibles");
             System.out.println("5. Listar habitaciones ocupadas");
             System.out.println("6. Listar habitaciones no disponibles");
-            System.out.println("7. Hacer una reserva");
-            System.out.println("8. Agregar habitación");
+            System.out.println("7. Agregar habitación");
             System.out.println("0. Salir");
             System.out.print("Opcion: ");
             opcion = Integer.parseInt(sc.nextLine());
 
             switch (opcion) {
                 case 1:
-                    System.out.println("");
+                    registrarPasajero();
                     break;
                 case 2:
-                    System.out.println("");
+                    hacerReserva();
                     break;
                 case 3:
                     System.out.println("");
@@ -123,9 +122,7 @@ public class Menu {
                     break;
                 case 6: mostrarHabitaciones(servicioHabitaciones.listarNoDisponibles());
                     break;
-                case 7: hacerReserva();
-                    break;
-                case 8: agregarHabitacion();
+                case 7: agregarHabitacion();
                     break;
                 case 0:
                     System.out.println("Saliendo...");
@@ -218,8 +215,8 @@ public class Menu {
         String dni = sc.nextLine();
 
         try {
-            Pasajero pasajero = ConexionPasajeros.buscarPorDni(dni);
-            servicioReservas.reservar(hab, pasajero, desde, hasta);
+            Pasajero pas = ConexionPasajeros.buscarPorDni(dni);
+            servicioReservas.reservar(hab, pas, desde, hasta);
             System.out.println("Reserva realizada.");
         } catch (PasajeroNoEncontradoException | DatosInvalidosException e) {
             System.out.println(e.getMessage());
@@ -253,6 +250,17 @@ public class Menu {
             System.out.print("¿Tiene escritorio? (s/n): ");
             boolean escritorio = sc.nextLine().equalsIgnoreCase("s");
             nueva = new Simple(numero, piso, precioBase, EEstadoHabitacion.DISPONIBLE, null, escritorio);
+        } else if (tipo == 2) {
+            System.out.print("¿Tiene cama matrimonial? (s/n): ");
+            boolean cama = sc.nextLine().equalsIgnoreCase("s");
+            nueva = new Doble(numero, piso, precioBase, EEstadoHabitacion.DISPONIBLE, null, cama);
+        }
+        else if (tipo == 3) {
+            System.out.print("¿Tiene jacuzzi? (s/n): ");
+            boolean jacuzzi = sc.nextLine().equalsIgnoreCase("s");
+            System.out.print("Cantidad de ambientes: ");
+            int ambientes = Integer.parseInt(sc.nextLine());
+            nueva = new Suite(numero, piso, precioBase, EEstadoHabitacion.DISPONIBLE, null, ambientes, jacuzzi);
         }
 
         if (nueva == null) {
@@ -266,6 +274,36 @@ public class Menu {
             System.out.println("Habitación agregada.");
         } catch (FalloConexionException e) {
             System.out.println("No se pudo guardar la habitación en la base.");
+        }
+    }
+
+    private void registrarPasajero() {
+        System.out.print("Nombre: ");
+        String nombre = sc.nextLine();
+        System.out.print("DNI: ");
+        String dni = sc.nextLine();
+        System.out.print("Origen: ");
+        String origen = sc.nextLine();
+        System.out.print("Domicilio de origen: ");
+        String domicilio = sc.nextLine();
+
+        try {
+            Pasajero nuevo = new Pasajero(nombre, dni, origen, domicilio);
+
+            try {
+                ConexionPasajeros.buscarPorDni(dni);
+                System.out.println("Ya existe un pasajero con ese DNI.");
+                return;
+            } catch (PasajeroNoEncontradoException e) {
+            }
+
+            ConexionPasajeros.insertarPasajero(nuevo);
+            pasajero.agregar(nuevo);
+            System.out.println("Pasajero registrado.");
+        } catch (DatosInvalidosException e) {
+            System.out.println(e.getMessage());
+        } catch (FalloConexionException e) {
+            System.out.println("No se pudo guardar el pasajero en la base.");
         }
     }
 

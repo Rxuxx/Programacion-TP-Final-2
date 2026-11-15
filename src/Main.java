@@ -1,6 +1,7 @@
 import Clases.*;
 import Exceptions.FalloConexionException;
 import Persistencia.ConexionHabitacion;
+import Persistencia.ConexionReserva;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -33,10 +34,17 @@ public class Main {
         } catch (FalloConexionException e) {
             System.out.println("No se pudieron cargar las habitaciones de la base.");
         }
+
+        // Cargamos la base antes de que inicie el programa
+
+        try {
+            sr.cargarReservas(ConexionReserva.obtenerReservas(sh.getHabitaciones()));
+        } catch (FalloConexionException e) {
+            System.out.println("No se pudieron cargar las reservas de la base.");
+        }
+
     Menu menu = new Menu(usuariosLista, pasajerosLista, sh, sr);
     menu.iniciar();
-
-    /*commint*/
 
     }
 }

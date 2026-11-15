@@ -17,6 +17,10 @@ public class ServicioHabitaciones {
         habitaciones.add(h);
     }
 
+    public List<Habitacion> getHabitaciones() {
+        return habitaciones;
+    }
+
     public List<Habitacion> listarDisponibles() {
         List<Habitacion> resultado = new ArrayList<>();
         for (Habitacion h : habitaciones) {

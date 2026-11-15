@@ -19,7 +19,7 @@ public class ServicioReservas {
 
     public boolean estaDisponible(Habitacion habitacion, LocalDate desde, LocalDate hasta) {
 
-        if (habitacion.getEstado() == EEstadoHabitacion.NO_DISPONIBLE) {
+        if (!habitacion.estaDisponible(desde, hasta)) {
             return false;
         }
 
@@ -47,9 +47,9 @@ public class ServicioReservas {
         return nueva;
     }
 
-
-
-
+    public void cargarReservas(List<Reserva> cargadas) {
+        reservas.addAll(cargadas);
+    }
 
 
 }
