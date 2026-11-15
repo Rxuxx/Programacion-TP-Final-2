@@ -106,6 +106,8 @@ public class Menu {
             System.out.println("8. Agregar habitación");
             System.out.println("9. Marcar habitación como no disponible");
             System.out.println("10. Marcar habitación como disponible");
+            System.out.println("11. Consultar disponibilidad por período");
+            System.out.println("12. Informe de pasajero");
             System.out.println("0. Salir");
             System.out.print("Opcion: ");
             opcion = Integer.parseInt(sc.nextLine());
@@ -135,6 +137,10 @@ public class Menu {
                 case 9: marcarNoDisponible();
                     break;
                 case 10: marcarDisponible();
+                    break;
+                case 11: consultarDisponibilidad();
+                    break;
+                case 12: verInformePasajero();
                     break;
                 case 0:
                     System.out.println("Saliendo...");
@@ -467,5 +473,49 @@ public class Menu {
         }
     }
 
+    private void consultarDisponibilidad() {
+        System.out.print("Número de habitación: ");
+        int numero = Integer.parseInt(sc.nextLine());
+
+        Habitacion hab = servicioHabitaciones.buscarPorNumero(numero);
+        if (hab == null) {
+            System.out.println("No existe esa habitación.");
+            return;
+        }
+
+        System.out.print("Fecha desde (AAAA-MM-DD): ");
+        LocalDate desde = LocalDate.parse(sc.nextLine());
+        System.out.print("Fecha hasta (AAAA-MM-DD): ");
+        LocalDate hasta = LocalDate.parse(sc.nextLine());
+
+        if (!hasta.isAfter(desde)) {
+            System.out.println("La fecha hasta debe ser posterior a la fecha desde.");
+            return;
+        }
+
+        if (hab.getEstado() == EEstadoHabitacion.NO_DISPONIBLE) {
+            System.out.println("No se puede: la habitación no está disponible (motivo: " + hab.getMotivo() + ").");
+        } else if (hab.getEstado() == EEstadoHabitacion.OCUPADA && !desde.isAfter(LocalDate.now())) {
+            System.out.println("No se puede: la habitación está ocupada actualmente.");
+        } else if (!servicioReservas.estaDisponible(hab, desde, hasta)) {
+            System.out.println("No se puede: ya hay una reserva que se superpone con ese período.");
+        } else {
+            System.out.println("Sí, la habitación " + numero + " se puede ocupar en ese período.");
+        }
+    }
+
+    private void verInformePasajero() {
+        System.out.print("DNI del pasajero: ");
+        String dni = sc.nextLine();
+
+        try {
+            Pasajero p = ConexionPasajeros.buscarPorDni(dni);
+            System.out.println(p.generarInforme());
+        } catch (PasajeroNoEncontradoException | DatosInvalidosException e) {
+            System.out.println(e.getMessage());
+        } catch (FalloConexionException e) {
+            System.out.println("No se pudo leer el pasajero de la base.");
+        }
+    }
 
 }
